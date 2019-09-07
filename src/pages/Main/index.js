@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import { FaGithubAlt, FaPlus, FaSpinner } from 'react-icons/fa';
 
@@ -25,7 +26,7 @@ export default class Main extends Component {
     const { repositories } = this.state;
 
     if (prevState.repositories !== repositories) {
-      localStorage.sertItem('repositories', JSON.stringify(repositories));
+      localStorage.setItem('repositories', JSON.stringify(repositories));
     }
   }
 
@@ -84,7 +85,9 @@ export default class Main extends Component {
           {repositories.map(repository => (
             <li key={repository.name}>
               <span>{repository.name}</span>
-              <a href="#">Detalhes</a>
+              <Link to={`/repository/${encodeURIComponent(repository.name)}`}>
+                Detalhes
+              </Link>
             </li>
           ))}
         </List>
