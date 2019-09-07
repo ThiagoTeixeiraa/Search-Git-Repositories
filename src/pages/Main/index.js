@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import { FaGithubAlt, FaPlus, FaSpinner } from 'react-icons/fa';
 
@@ -13,6 +15,8 @@ export default class Main extends Component {
     newRepo: '',
     repositories: [],
     loading: false,
+    hasError: null,
+    error:{}
   };
 
   componentDidMount() {
@@ -24,10 +28,15 @@ export default class Main extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    const { repositories } = this.state;
+    const { repositories,error } = this.state;
 
     if (prevState.repositories !== repositories) {
       localStorage.setItem('repositories', JSON.stringify(repositories));
+    }
+
+    if (prevState.error !== error) {
+      localStorage.setItem('error', JSON.stringify(error));
+      toast.error(String(this.state.error))
     }
   }
 
@@ -40,23 +49,38 @@ export default class Main extends Component {
 
     this.setState({ loading: true });
 
-    const { newRepo, repositories } = this.state;
+    try {
+      const { newRepo, repositories } = this.state;
 
-    const response = await api.get(`/repos/${newRepo}`);
+      if (newRepo === '') throw new Error('Você precisa indicar um repositório');
 
-    const data = {
-      name: response.data.full_name,
-    };
+      const hasRepo = repositories.find(r => r.name === newRepo);
 
-    this.setState({
-      repositories: [...repositories, data],
-      newRepo: '',
-      loading: false,
-    });
+      if (hasRepo) throw new Error('Repositório Duplicado');
+
+      const response = await api.get(`/repos/${newRepo}`);
+
+      const data = {
+        name: response.data.full_name,
+      };
+
+      this.setState({
+        repositories: [...repositories, data],
+        newRepo: '',
+        hasError:false
+      });
+    } catch (error) {
+      this.setState({
+        hasError: true ,
+        error:error
+      });
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
   render() {
-    const { newRepo, loading, repositories } = this.state;
+    const { newRepo, loading, repositories, hasError } = this.state;
 
     return (
       <Container>
@@ -65,7 +89,7 @@ export default class Main extends Component {
           Repositórios
         </h1>
 
-        <Form onSubmit={this.handleSubmit}>
+        <Form onSubmit={this.handleSubmit} hasError={hasError}>
           <input
             type="text"
             placeholder="Adicionar Repositório"
