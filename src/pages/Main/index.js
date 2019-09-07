@@ -5,7 +5,8 @@ import { FaGithubAlt, FaPlus, FaSpinner } from 'react-icons/fa';
 
 import api from '../../services/api';
 
-import { Container, Form, SubmmitButton, List } from './styles';
+import Container from '../../components/styles';
+import { Form, SubmmitButton, List } from './styles';
 
 export default class Main extends Component {
   state = {
