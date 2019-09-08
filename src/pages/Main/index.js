@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { FaGithubAlt, FaPlus, FaSpinner } from 'react-icons/fa';
 
 import api from '../../services/api';
-
+import Header from '../../components/header';
 import Container from '../../components/styles';
 import { Form, SubmmitButton, List } from './styles';
 
@@ -83,40 +83,42 @@ export default class Main extends Component {
     const { newRepo, loading, repositories, hasError } = this.state;
 
     return (
-      <Container>
-        <h1>
-          <FaGithubAlt />
-          Repositórios
-        </h1>
+      <>
+        <Header />
+        <Container>
+          <h1>
+            Repositórios
+          </h1>
 
-        <Form onSubmit={this.handleSubmit} hasError={hasError}>
-          <input
-            type="text"
-            placeholder="Adicionar Repositório"
-            value={newRepo}
-            onChange={this.handleInputChange}
-          />
+          <Form onSubmit={this.handleSubmit} hasError={hasError}>
+            <input
+              type="text"
+              placeholder="Adicionar Repositório"
+              value={newRepo}
+              onChange={this.handleInputChange}
+            />
 
-          <SubmmitButton loading={loading}>
-            {loading ? (
-              <FaSpinner color="#fff" size={14} />
-            ) : (
-              <FaPlus color="#fff" size={14} />
-            )}
-          </SubmmitButton>
-        </Form>
+            <SubmmitButton loading={loading}>
+              {loading ? (
+                <FaSpinner color="#fff" size={14} />
+              ) : (
+                <FaPlus color="#fff" size={14} />
+              )}
+            </SubmmitButton>
+          </Form>
 
-        <List>
-          {repositories.map(repository => (
-            <li key={repository.name}>
-              <span>{repository.name}</span>
-              <Link to={`/repository/${encodeURIComponent(repository.name)}`}>
-                Detalhes
-              </Link>
-            </li>
-          ))}
-        </List>
-      </Container>
+          <List>
+            {repositories.map(repository => (
+              <li key={repository.name}>
+                <span>{repository.name}</span>
+                <Link to={`/repository/${encodeURIComponent(repository.name)}`}>
+                  Detalhes
+                </Link>
+              </li>
+            ))}
+          </List>
+        </Container>
+      </>
     );
   }
 }
